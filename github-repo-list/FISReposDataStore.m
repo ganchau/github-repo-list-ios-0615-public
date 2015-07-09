@@ -7,6 +7,8 @@
 //
 
 #import "FISReposDataStore.h"
+#import "FISGithubAPIClient.h"
+#import "FISGithubRepository.h"
 
 @implementation FISReposDataStore
 
@@ -27,6 +29,35 @@
         _repositories=[NSMutableArray new];
     }
     return self;
+}
+
+//- (void)parseRepos
+//{
+//    [FISGithubAPIClient getAllRepoWithCompletionHandler:^(NSArray *repos, NSError *error) {
+//        for (NSDictionary *repo in repos) {
+//            [self.repositories addObject:[FISGithubRepository parseDictionary:repo]];
+//        }
+//    }];
+//}
+
+- (void)fetchRepositoriesWithCompletion:(void (^)(BOOL))block
+{
+    // use the api client method to get the array of dictionaries
+    // turn those dictionaries into FISGithubRepsitory objects
+    // stash those new objects on self.repositories
+    // call back with YES (or eventually NO)
+    
+    [FISGithubAPIClient getAllRepoWithCompletionHandler:^(NSArray *repositories) {
+        // build up an array of the repos that was turned into objects
+        [self.repositories removeAllObjects];
+        
+        for (NSDictionary *repoDict in repositories) {
+            FISGithubRepository *repo = [[FISGithubRepository alloc] initWithDictionary:repoDict];
+            [self.repositories addObject:repo];
+        }
+        
+        block(YES);
+    }];
 }
 
 

@@ -10,5 +10,9 @@
 
 @interface FISGithubAPIClient : NSObject
 
+// Client ID : f3953a96bb10a5177904
+// Client Secret : ac64f3a35f8ecf7a00b141e8eaa1012d865fb09b
+
++ (void)getAllRepoWithCompletionHandler:(void (^)(NSArray * repositories))completionBlock;
 
 @end

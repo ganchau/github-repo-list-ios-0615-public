@@ -7,8 +7,13 @@
 //
 
 #import "FISReposTableViewController.h"
+#import "FISReposDataStore.h"
+#import "FISGithubRepository.h"
 
 @interface FISReposTableViewController ()
+
+@property (strong, nonatomic) NSArray *repositories;
+
 @end
 
 @implementation FISReposTableViewController
@@ -33,6 +38,17 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    [[FISReposDataStore sharedDataStore] fetchRepositoriesWithCompletion:^(BOOL success) {
+        FISReposDataStore *dataStore = [FISReposDataStore sharedDataStore];
+        NSLog(@"Number of repos: %lu", [FISReposDataStore sharedDataStore].repositories.count);
+        
+        self.repositories = dataStore.repositories;
+        
+        // add to the main thread
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [self.tableView reloadData];
+        }];
+    }];
 }
 
 - (void)didReceiveMemoryWarning
@@ -51,7 +67,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 0;
+    return self.repositories.count;
     // Return the number of rows in the section.
 }
 
@@ -60,7 +76,8 @@
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"basicCell" forIndexPath:indexPath];
     
-    // Configure the cell...
+    FISGithubRepository *repository = self.repositories[indexPath.row];
+    cell.textLabel.text = repository.fullName;
     
     return cell;
 }

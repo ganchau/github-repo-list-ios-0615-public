@@ -12,4 +12,7 @@
 
 @property (strong, nonatomic) NSMutableArray *repositories;
 
++ (instancetype)sharedDataStore;
+- (void)fetchRepositoriesWithCompletion:(void (^)(BOOL success))block;
+
 @end
